@@ -27,4 +27,3 @@ def get_data(file_path,img_size,channel=1):
     #input/=std
 
     return input
-
