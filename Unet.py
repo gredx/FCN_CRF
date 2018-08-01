@@ -43,5 +43,5 @@ def Unet(img_rows,img_cols,optimizer='sgd', loss='mse', metrics='acc'):
 
     conv10 = Conv2D(1,(1,1),padding='same',activation='sigmoid')(conv9)
     model = Model(input=[inputs],output=[conv10])
-    model.compile(optimizer=optimizer,loss=loss,metrics=metrics)
+    model.compile(optimizer=optimizer,loss=loss,metrics=[metrics])
     return model

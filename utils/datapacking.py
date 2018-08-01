@@ -12,7 +12,7 @@ def get_randstr(len=20):
         tar_str +=bas_str[random.randint(0,strlen-1)]
     return tar_str
 
-def packImage(path,format='jpg',saved_name=None,size=(0,0,1000,800)):
+def packImage(path,format='bmp',saved_name=None,size=(0,0,1000,800)):
     '''把指定目录下的图片打包成npz文件
 
     会把目录下文件和文件名一同打包
@@ -22,7 +22,7 @@ def packImage(path,format='jpg',saved_name=None,size=(0,0,1000,800)):
 
 
     :param path: 要打包图片的路径
-    :param format: 图片的格式，默认是'jpg'
+    :param format: 图片的格式，默认是'bmp'
     :param saved_name: 输出文件的名字，缺省是一个长度为20的随机字符串
     :param size: a tuple.对图片裁剪的参数，(left,upper,right,lower),这个参数绝对不能超出图片的大小，否则出现意料之外的错误
     :return: 无返回值
@@ -48,14 +48,14 @@ def packImage(path,format='jpg',saved_name=None,size=(0,0,1000,800)):
 
     np.savez(saved_name,packfile,filesname)
 
-def unpackImage(file, imageSize, format, output_dir=None):
+def unpackImage(file, imageSize, channel, output_dir=None):
     '''把npz图片还原为图片
 
     默认npz文件中arr_1是文件名，arr_0是图片，输入npz文件的路径，图片的尺寸，要输出的文件夹
 
     :param file: npz文件的路径
     :param imageSize: a tuple图片的尺寸 (hight,weight)
-    :param format: 图像的通道数，彩色3，灰度1
+    :param channel: 图像的通道数，彩色3，灰度1
     :param output_dir: 输出文件夹的路径，若为空则创建一个随机名字的文件夹
     :return: 无返回值
     '''
@@ -67,8 +67,8 @@ def unpackImage(file, imageSize, format, output_dir=None):
     r = np.load(file)
     images = r['arr_0.npy']
     filesname = r['arr_1.npy']
-    att1 = images.size//imageSize[0]//imageSize[1]//format      # python3 中 / 结果是浮点数， //结果是整数
-    images = np.reshape(images,(att1,imageSize[0],imageSize[1],format))
+    att1 = images.size // imageSize[0] // imageSize[1] // channel      # python3 中 / 结果是浮点数， //结果是整数
+    images = np.reshape(images, (att1, imageSize[0], imageSize[1], channel))
     for image,name in zip(images,filesname):
         plt.imsave(name,image)
 
@@ -77,4 +77,4 @@ if __name__ == '__main__':
     path = 'D:\PythonCode\FCN_CRF\\utils\\trainData'
     saved_name = 'train.npz'
     packImage(path,size=(0,0,1200,800),saved_name=saved_name)
-    unpackImage('D:\PythonCode\FCN_CRF\\train.npz',imageSize=(800,1200),format=3)
+    unpackImage('D:\PythonCode\FCN_CRF\\train.npz', imageSize=(800,1200), channel=3)
