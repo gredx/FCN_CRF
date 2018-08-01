@@ -11,16 +11,21 @@ from utils.get_data import get_data
 from utils.datapacking import get_randstr
 
 def predict():
-    model = Unet(512,512,Adam(1e-4),loss=dice_coef_loss,metrics=dice_coef)
-    testImagesPath = ' '
+    # get model
+    model = Unet(512,512,optimizer=Adam(1e-4),loss=dice_coef_loss,metrics=dice_coef)
+    # get test images
+    print("getting test images...")
+    testImagesPath = 'E:\ljs\\u-net\\test_data.npy'
     imgs_test = get_data(testImagesPath,(512,512))
-
+    # load weighs
+    print("loading weighs...")
     model.load_weights('weighs.h5')
-
+    # predict
+    print("predicting ...")
     imgs_predict = model.predict(imgs_test,batch_size=1,verbose=1)
-    att1 = imgs_predict//512//512
-    imgs_predict = np.ndarray((att1,),dtype=np.int32)
+
     # 把输出结果保存到一个文件夹里
+    print('saving output images...')
     dir = get_randstr()
     os.mkdir(dir)
 

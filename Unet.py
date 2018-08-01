@@ -1,6 +1,7 @@
 
 from keras.models import Model
 from keras.layers import Conv2D,Conv2DTranspose,MaxPool2D,concatenate,Input,Dropout
+from keras import backend as K
 # 评估训练结果的函数
 def dice_coef(y_true, y_pred):
     y_true_f = K.flatten(y_true)
