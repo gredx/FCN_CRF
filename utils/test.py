@@ -5,6 +5,7 @@
 import os
 from Unet import Unet,dice_coef_loss,dice_coef
 import matplotlib.pyplot as plt
+from skimage.io import imsave
 from keras.optimizers import Adam
 import numpy as np
 from utils.get_data import get_data
@@ -30,8 +31,11 @@ def predict():
     os.mkdir(dir)
 
     for id,image in enumerate(imgs_predict):
-        image = (image[:, :, 0] * 255.).astype(np.uint8)
-        plt.imsave(os.path.join(dir,str(id)+'.png'),image)
+        image = (image[:, :, 0]*255.).astype(np.uint8)
+        # plt 得到的结果默认是彩色存储
+        #plt.imsave(os.path.join(dir,str(id)+'.png'),image)
+        # skimage存灰度
+        imsave(os.path.join(dir,str(id)+'.png'),image)
 
 if __name__ == '__main__':
     predict()
