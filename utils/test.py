@@ -11,12 +11,13 @@ import numpy as np
 from utils.get_data import get_data
 from utils.datapacking import get_randstr
 
+
 def predict():
     # get model
     model = Unet(512,512,optimizer=Adam(1e-4),loss=dice_coef_loss,metrics=dice_coef)
     # get test images
     print("getting test images...")
-    testImagesPath = 'E:\ljs\\u-net\\test_data.npy'
+    testImagesPath = 'E:\ljs\\u-net\\train_data.npy'
     imgs_test = get_data(testImagesPath,(512,512))
     # load weighs
     print("loading weighs...")

@@ -2,6 +2,7 @@
 from keras.models import Model
 from keras.layers import Conv2D,Conv2DTranspose,MaxPool2D,concatenate,Input,Dropout
 from keras import backend as K
+
 # 评估训练结果的函数
 def dice_coef(y_true, y_pred):
     y_true_f = K.flatten(y_true)
@@ -53,6 +54,15 @@ def Unet(img_rows,img_cols,optimizer='sgd', loss='mse', metrics='acc'):
     conv9 = Conv2D(32,(3,3),padding='same',activation='relu')(conv9)
 
     conv10 = Conv2D(1,(1,1),padding='same',activation='sigmoid')(conv9)
+
+    '''conv10 = CrfRnnLayer(image_dims=(img_rows, img_cols),
+                         num_classes=21,
+                         theta_alpha=160.,
+                         theta_beta=3.,
+                         theta_gamma=3.,
+                         num_iterations=10,
+                         name='crfrnn')([conv1, inputs])
+'''
     model = Model(inputs=[inputs],outputs=[conv10])
     model.compile(optimizer=optimizer,loss=loss,metrics=[metrics])
     return model

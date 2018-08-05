@@ -2,6 +2,7 @@
 from PIL import Image
 from utils import  searchFile
 import matplotlib.pyplot as plt
+from skimage.io import imsave
 import numpy as np
 import os,random
 def get_randstr(len=20):
@@ -12,7 +13,7 @@ def get_randstr(len=20):
         tar_str +=bas_str[random.randint(0,strlen-1)]
     return tar_str
 
-def packImage(path,format='bmp',saved_name=None,size=(0,0,1000,800)):
+def packImage(path,format='jpg',saved_name=None,size=(0,0,1000,800)):
     '''把指定目录下的图片打包成npz文件
 
     会把目录下文件和文件名一同打包
@@ -65,16 +66,28 @@ def unpackImage(file, imageSize, channel, output_dir=None):
     os.chdir(output_dir)
 
     r = np.load(file)
-    images = r['arr_0.npy']
-    filesname = r['arr_1.npy']
-    att1 = images.size // imageSize[0] // imageSize[1] // channel      # python3 中 / 结果是浮点数， //结果是整数
-    images = np.reshape(images, (att1, imageSize[0], imageSize[1], channel))
+    images = r
+
+    att1 = images.size // imageSize[0] // imageSize[1] // channel  # python3 中 / 结果是浮点数， //结果是整数
+    filesname=[]
+    if file.split('.')[-1] == 'npz':
+        images = r['arr_0.npy']
+        filesname = r['arr_1.npy']
+
+    else :
+        for i in range(att1):
+            filesname.append(str(i)+'.jpg')
+    if channel>1:
+        images = np.reshape(images, (att1, imageSize[0], imageSize[1], channel))
+    else :
+        images = images.astype(np.uint8)
+        images = images.reshape((att1, imageSize[0], imageSize[1]))
     for image,name in zip(images,filesname):
-        plt.imsave(name,image)
+        imsave(name,image)
 
 
 if __name__ == '__main__':
-    path = 'D:\PythonCode\FCN_CRF\\utils\\trainData'
+    path = 'F:\liuyang\MyNet\图片打包\data\\trainData'
     saved_name = 'train.npz'
-    packImage(path,size=(0,0,1200,800),saved_name=saved_name)
-    unpackImage('D:\PythonCode\FCN_CRF\\train.npz', imageSize=(800,1200), channel=3)
+   # packImage(path,size=(0,0,1200,800),saved_name=saved_name)
+    unpackImage('F:\liuyang\\train_label.npy', imageSize=(512,512), channel=1)
