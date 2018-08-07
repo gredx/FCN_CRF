@@ -13,7 +13,7 @@ def get_randstr(len=20):
         tar_str +=bas_str[random.randint(0,strlen-1)]
     return tar_str
 
-def packImage(path,format='jpg',saved_name=None,size=(0,0,1000,800)):
+def packImage(path,format='jpg',saved_name=None,size=(0,0,512,512)):
     '''把指定目录下的图片打包成npz文件
 
     会把目录下文件和文件名一同打包
@@ -36,8 +36,11 @@ def packImage(path,format='jpg',saved_name=None,size=(0,0,1000,800)):
     filesname =[]
     if saved_name is None:
         saved_name = get_randstr()
+    i=0
     for filepath in lis:
-
+        i=i+1
+        if i>100:
+            break
         filename = filepath.split('\\')[-1]
         filesname.append(filename)
 
@@ -68,15 +71,17 @@ def unpackImage(file, imageSize, channel, output_dir=None):
     r = np.load(file)
     images = r
 
-    att1 = images.size // imageSize[0] // imageSize[1] // channel  # python3 中 / 结果是浮点数， //结果是整数
+
     filesname=[]
     if file.split('.')[-1] == 'npz':
         images = r['arr_0.npy']
         filesname = r['arr_1.npy']
 
     else :
+        att1 = images.size // imageSize[0] // imageSize[1] // channel
         for i in range(att1):
             filesname.append(str(i)+'.jpg')
+    att1 = images.size // imageSize[0] // imageSize[1] // channel
     if channel>1:
         images = np.reshape(images, (att1, imageSize[0], imageSize[1], channel))
     else :
@@ -87,7 +92,7 @@ def unpackImage(file, imageSize, channel, output_dir=None):
 
 
 if __name__ == '__main__':
-    path = 'F:\liuyang\MyNet\图片打包\data\\trainData'
-    saved_name = 'train.npz'
-   # packImage(path,size=(0,0,1200,800),saved_name=saved_name)
-    unpackImage('F:\liuyang\\train_label.npy', imageSize=(512,512), channel=1)
+    path = 'F:\liuyang\\U-net数据\\train_result'
+    saved_name = 'train_result'
+    #packImage(path,format='png',size=(0,0,512,512),saved_name=saved_name)
+    unpackImage('F:\liuyang\\U-net数据\\train_result.npz', imageSize=(512,512), channel=1)
